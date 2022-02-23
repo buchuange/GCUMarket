@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.market.buyer.dao.BuyerDao">
+    <select id="login" resultType="Buyer">
+       select *
+       from tbl_buyer
+       where loginAct=#{loginAct} and loginPwd=#{loginPwd}
+    </select>
+
+    <update id="updatePwd">
+        update tbl_buyer
+          set
+          loginPwd=#{newPwd},
+          editTime=#{editTime},
+          editBy=#{editBy}
+        where id=#{id}
+    </update>
+
+    <select id="getTotalByCondition" resultType="int">
+        select
+          count(*)
+        from tbl_buyer
+        <where>
+            <if test="name != null and name != ''">
+                loginAct like concat('%', #{name}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getBuyerListByCondition" resultType="Buyer">
+        select
+           id, loginAct, email, lockState
+        from tbl_buyer
+        <where>
+            <if test="name != null and name != ''">
+                loginAct like concat('%', #{name}, '%')
+            </if>
+        </where>
+        order by createTime desc
+        limit #{pageNum}, #{pageSize}
+    </select>
+
+    <update id="updateStatus">
+        update tbl_buyer
+        set
+           lockState=#{lockState},
+           editTime=#{editTime},
+           editBy=#{editBy}
+        where id=#{id}
+    </update>
+
+    <select id="getBuyerById" resultType="Buyer">
+        select * from tbl_buyer where id=#{id}
+    </select>
+</mapper>

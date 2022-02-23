@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.market.business.dao.ProductRemarkDao">
+
+    <insert id="addRemark">
+        insert into tbl_product_remark(
+          id,
+          productId,
+          noteContent,
+          createTime,
+          createBy
+        ) values(
+          #{id},
+          #{productId},
+          #{noteContent},
+          #{createTime},
+          #{createBy}
+        )
+    </insert>
+
+    <select id="getRemarkListByPId" resultType="ProductRemark">
+        select
+           p.id, p.noteContent, p.createTime, b.loginAct as createBy
+        from  tbl_product_remark p
+        join tbl_buyer b
+        on p.createBy = b.id
+        where productId=#{productId}
+        order by p.createTime desc
+    </select>
+
+    <delete id="deleteProductRemark">
+        delete from tbl_product_remark where id=#{id}
+    </delete>
+</mapper>

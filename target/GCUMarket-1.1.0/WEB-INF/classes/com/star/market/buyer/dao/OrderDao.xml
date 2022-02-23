@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.market.buyer.dao.OrderDao">
+
+    <insert id="save">
+         insert into tbl_order_info(
+             orderNumber,
+             buyerId,
+             orderPrice,
+             orderStatus,
+             contactsPhone,
+             orderDestination,
+             createTime,
+             createBy
+         ) values(
+             #{orderNumber},
+             #{buyerId},
+             #{orderPrice},
+             #{orderStatus},
+             #{contactsPhone},
+             #{orderDestination},
+             #{createTime},
+             #{createBy}
+         )
+    </insert>
+
+    <select id="getTotalByCondition" resultType="int">
+        select
+           count(*)
+        from tbl_order_info
+        where buyerId=#{buyerId}
+        <if test="orderNumber != null and orderNumber !=''">
+            and orderNumber like '%' #{orderNumber} '%'
+        </if>
+    </select>
+
+    <select id="getOrderListByCondition" resultType="OrderInfo">
+        select
+          orderNumber, createTime, orderDestination, orderStatus
+        from tbl_order_info
+        where buyerId=#{buyerId}
+        <if test="orderNumber != null and orderNumber !=''">
+            and orderNumber like '%' #{orderNumber} '%'
+        </if>
+        order by createTime desc
+        limit #{pageNum}, #{pageSize}
+    </select>
+
+    <update id="updateStatus">
+        update tbl_order_info
+        set
+           orderStatus=#{orderStatus},
+           editTime=#{editTime},
+           editBy=#{editBy}
+        where orderNumber=#{orderNumber}
+    </update>
+
+    <select id="getInfo" resultType="OrderInfo">
+        select
+           i.orderNumber, b.realName as buyerId, i.contactsPhone, i.orderDestination
+        from tbl_order_info i
+        join tbl_buyer b
+        on i.buyerId = b.id
+        where i.orderNumber=#{orderNumber}
+    </select>
+</mapper>

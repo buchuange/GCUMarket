@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.market.business.dao.BusinessDao">
+
+    <select id="login" resultType="Business">
+        select *
+        from tbl_business
+        where loginAct=#{loginAct} and loginPwd=#{loginPwd}
+    </select>
+
+    <update id="updatePwd">
+        update tbl_business
+        set
+          loginPwd=#{newPwd},
+          editTime=#{editTime},
+          editBy=#{editBy}
+        where id=#{id}
+    </update>
+
+    <select id="getTotalByCondition" resultType="int">
+        select
+          count(*)
+        from tbl_business
+        <where>
+            <if test="name != null and name != '' ">
+                name like '%' #{name} '%'
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                and contacts like '%' #{contacts} '%'
+            </if>
+        </where>
+    </select>
+
+    <select id="getBusinessListByCondition" resultType="Business">
+        select
+           id, name, contacts, contactPhone, lockState
+        from tbl_business
+        <where>
+            <if test="name != null and name != '' ">
+                name like '%' #{name} '%'
+            </if>
+            <if test="contacts != null and contacts != '' ">
+                and contacts like '%' #{contacts} '%'
+            </if>
+        </where>
+        order by createTime desc
+        limit #{pageNum}, #{pageSize}
+    </select>
+
+    <update id="updateStatus">
+        update tbl_business
+        set
+           lockState=#{lockState},
+           editTime=#{editTime},
+           editBy=#{editBy}
+        where id=#{id}
+    </update>
+
+    <select id="getBusinessById" resultType="Business">
+        select * from tbl_business where id=#{id}
+    </select>
+
+    <update id="updateExpireTime">
+        update tbl_business
+        set
+           expireTime=#{expireTime},
+           editTime=#{editTime},
+           editBy=#{editBy}
+        where id=#{id}
+    </update>
+</mapper>

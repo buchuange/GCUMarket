@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.market.buyer.dao.ShoppingCartDao">
+
+    <insert id="saveCart">
+        insert into tbl_order_item(
+          orderNumber,
+          buyerId,
+          businessId,
+          productId,
+          goodsName,
+          goodsNumber,
+          goodsPrice,
+          goodsAmount,
+          payStatus,
+          createTime
+        ) values(
+          #{orderNumber},
+          #{buyerId},
+          #{businessId},
+          #{productId},
+          #{goodsName},
+          #{goodsNumber},
+          #{goodsPrice},
+          #{goodsAmount},
+          #{payStatus},
+          #{createTime}
+        )
+    </insert>
+
+    <select id="getCartList" resultType="OrderItem">
+        select
+          id,
+          productId,
+          goodsName,
+          goodsNumber,
+          goodsPrice,
+          goodsAmount
+        from tbl_order_item
+        where payStatus='0' and buyerId=#{buyerId}
+    </select>
+
+    <select id="getCartById" resultType="OrderItem">
+        select
+          productId, goodsNumber
+        from tbl_order_item
+        where id=#{cartId}
+    </select>
+
+    <update id="updatePayStatus">
+        update tbl_order_item
+        set
+           orderNumber=#{orderNumber},
+           payStatus='1'
+        where id=#{id}
+    </update>
+
+    <select id="getGoodsList" resultType="OrderItem">
+        select
+           id, goodsName, goodsNumber, goodsAmount, deliveryStatus, productId, orderNumber
+        from tbl_order_item
+        where orderNumber=#{orderNumber}
+    </select>
+
+    <update id="confirmHarvest">
+        update tbl_order_item
+        set
+           deliveryStatus='2'
+        where id=#{id}
+    </update>
+
+    <select id="showTransactionList" resultType="OrderItem">
+         select
+           b.loginAct as buyerId,o.goodsNumber, o.goodsAmount, o.createTime
+        from tbl_order_item o
+        join tbl_buyer b
+        on o.buyerId = b.id
+        where o.productId=#{productId} and o.payStatus='1' and o.deliveryStatus='2'
+    </select>
+
+    <update id="cancelOrder">
+        update tbl_order_item
+        set
+           deliveryStatus='4'
+        where id=#{id}
+    </update>
+
+    <select id="getTotalByCondition" resultType="int">
+        select
+           count(*)
+        from tbl_order_item
+        where businessId=#{businessId} and payStatus='1'
+        <if test="goodsName != null and goodsName !=''">
+            and goodsName like '%' #{goodsName} '%'
+        </if>
+    </select>
+
+    <select id="getSaleListByCondition" resultType="OrderItem">
+        select
+           id, orderNumber, goodsName, goodsNumber, goodsPrice, goodsAmount, deliveryStatus
+        from tbl_order_item
+        where businessId=#{businessId} and payStatus='1'
+        <if test="goodsName != null and goodsName !=''">
+            and goodsName like '%' #{goodsName} '%'
+        </if>
+        order by createTime desc
+        limit #{pageNum}, #{pageSize}
+    </select>
+
+    <update id="deliverGoods">
+          update tbl_order_item
+        set
+           deliveryStatus='1'
+        where id=#{id}
+    </update>
+</mapper>

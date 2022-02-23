@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.market.buyer.dao.ShoppingCartDao">
+
+    <insert id="saveCart">
+        insert into tbl_order_item(
+          buyerId,
+          businessId,
+          productId,
+          goodsName,
+          goodsNumber,
+          goodsPrice,
+          goodsAmount,
+          createTime
+        ) values(
+          #{buyerId},
+          #{businessId},
+          #{productId},
+          #{goodsName},
+          #{goodsNumber},
+          #{goodsPrice},
+          #{goodsAmount},
+          #{createTime}
+        )
+    </insert>
+</mapper>

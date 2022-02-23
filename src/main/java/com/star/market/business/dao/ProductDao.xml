@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.star.market.business.dao.ProductDao">
+
+    <insert id="save">
+        insert into tbl_product(
+            id,
+            businessId,
+            name,
+            standards,
+            price,
+            inventory,
+            category,
+            description,
+            createBy,
+            createTime
+        ) values(
+            #{id},
+            #{businessId},
+            #{name},
+            #{standards},
+            #{price},
+            #{inventory},
+            #{category},
+            #{description},
+            #{createBy},
+            #{createTime}
+        )
+    </insert>
+
+    <select id="getTotalByCondition" resultType="int">
+        select
+           count(*)
+        from tbl_product
+        where businessId=#{businessId}
+        <if test="name != null and name != ''">
+            and name like '%' #{name} '%'
+        </if>
+        <if test="category != null and category != ''">
+            and category like '%' #{category} '%'
+        </if>
+    </select>
+
+    <select id="getProductListByCondition" resultType="Product">
+        select
+           id, name, category, price, inventory, status
+        from tbl_product
+        where businessId=#{businessId}
+        <if test="name != null and name != ''">
+            and name like '%' #{name} '%'
+        </if>
+        <if test="category != null and category != ''">
+            and category like '%' #{category} '%'
+        </if>
+        order by createTime desc
+        limit #{pageNum}, #{pageSize}
+    </select>
+
+    <update id="updateStatus">
+        update tbl_product
+        set
+           status=#{status},
+           editTime=#{editTime},
+           editBy=#{editBy}
+        where id=#{id}
+    </update>
+
+    <select id="getProductById" resultType="Product">
+        select * from tbl_product where id=#{id}
+    </select>
+
+    <update id="updateInfo">
+        update tbl_product
+        set
+           name=#{name},
+           standards=#{standards},
+           price=#{price},
+           inventory=#{inventory},
+           category=#{category},
+           description=#{description},
+           editTime=#{editTime},
+           editBy=#{editBy}
+        where id=#{id}
+    </update>
+
+    <delete id="delete">
+        delete from tbl_product
+        where id in
+        <foreach collection="array" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getTotal" resultType="int">
+        select
+          count(*)
+        from tbl_product
+        where status='1' and inventory > 0
+        <if test="name != null and name != ''">
+            and name like '%' #{name} '%'
+        </if>
+        <if test="category != null and category != ''">
+            and category like '%' #{category} '%'
+        </if>
+    </select>
+
+    <select id="getShoppingList" resultType="Product">
+        select
+           id, name, category, price, inventory, status
+        from tbl_product
+        where status='1' and inventory > 0
+        <if test="name != null and name != ''">
+            and name like '%' #{name} '%'
+        </if>
+        <if test="category != null and category != ''">
+            and category like '%' #{category} '%'
+        </if>
+        order by createTime desc
+        limit #{pageNum}, #{pageSize}
+    </select>
+
+    <update id="updateInventory">
+        update tbl_product
+        set
+           inventory = inventory - #{goodsNumber},
+           editTime=#{editTime},
+           editBy=#{editBy}
+        where id=#{id}
+    </update>
+
+    <update id="addInventory">
+        update tbl_product
+        set
+           inventory = inventory + #{goodsNumber},
+           editTime=#{editTime},
+           editBy=#{editBy}
+        where id=#{id}
+    </update>
+</mapper>
