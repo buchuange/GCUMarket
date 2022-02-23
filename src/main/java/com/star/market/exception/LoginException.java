@@ -4,6 +4,7 @@ public class LoginException extends Exception{
 
     public LoginException() {
         System.out.println("你好");
+        System.out.println("你好2");
     }
 
     public LoginException(String message) {
